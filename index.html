@@ -430,43 +430,11 @@
         });
     </script>
 
-    <!-- Adsterra Integration (PostScribe - The Industry Standard Fix) -->
-    <div id="adsterra-container"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/postscribe/2.0.8/postscribe.min.js"></script>
-    <script>
-        // Wait for everything to be stable
-        window.addEventListener('load', function () {
-            setTimeout(function () {
-                console.log("Starting safe ad injection via PostScribe...");
-
-                postscribe('#adsterra-container', `
-                <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"><\/script>
-                <script>
-                    if (typeof show_10479823 === 'function') {
-                        show_10479823({
-                            type: 'inApp',
-                            inAppSettings: {
-                                frequency: 2,
-                                capping: 0.1,
-                                interval: 30,
-                                timeout: 5,
-                                everyPage: false
-                            }
-                        });
-                    }
-                <\/script>
-            `, {
-                    done: function () {
-                        console.log('Adsterra ads loaded safely.');
-                    },
-                    error: function (err) {
-                        console.error('Adsterra injection failed:', err);
-                    }
-                });
-
-            }, 2000); // 2 Second safety delay
-        });
-    </script>
+    <!-- Adsterra Sandbox Integration (Iframe Overlay) -->
+    <iframe src="ad-frame.html"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; border: none; z-index: 9999; pointer-events: none; background: transparent;"
+        allowtransparency="true">
+    </iframe>
 </body>
 
 </html>
