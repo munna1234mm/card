@@ -427,35 +427,22 @@
         });
     </script>
 
-    <!-- Adsterra Config: Failsafe Lazy Loader -->
+    <!-- Adsterra Telegram Bot SDK: Sync Placement (Prevents Doc Write Wipe) -->
+    <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"></script>
+
     <script>
-        window.addEventListener('load', function () {
-            // Wait 5 seconds after page load to ensure UI is 100% visible
-            setTimeout(function () {
-                console.log("Lazy loading Adsterra SDK...");
-                var script = document.createElement('script');
-                script.src = '//libtl.com/sdk.js';
-                script.setAttribute('data-zone', '10479823');
-                script.setAttribute('data-sdk', 'show_10479823');
-                script.onerror = function () { console.error("Adsterra SDK failed to load."); };
-                script.onload = function () {
-                    console.log("Adsterra SDK loaded. showing ads...");
-                    if (typeof show_10479823 === 'function') {
-                        show_10479823({
-                            type: 'inApp',
-                            inAppSettings: {
-                                frequency: 2,
-                                capping: 0.1,
-                                interval: 30,
-                                timeout: 5,
-                                everyPage: false
-                            }
-                        });
-                    }
-                };
-                document.body.appendChild(script);
-            }, 5000); // 5 Seconds Delay
-        });
+        if (typeof show_10479823 === 'function') {
+            show_10479823({
+                type: 'inApp',
+                inAppSettings: {
+                    frequency: 2,
+                    capping: 0.1,
+                    interval: 30,
+                    timeout: 5,
+                    everyPage: false
+                }
+            });
+        }
     </script>
 </body>
 
