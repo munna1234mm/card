@@ -457,28 +457,6 @@
                 <html>
                 <head>
                     <style>
-                        body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
-                        /* Ensure the ad placeholder, if any, takes full clickability */
-                        body > * { pointer-events: auto; } 
-                    </style>
-                </head>
-                <body>
-                    <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"><\/script>
-                    <script>
-                        if (typeof show_10479823 === 'function') {
-                            show_10479823({
-                                type: 'inApp',
-                                inAppSettings: {
-                                    frequency: 2,
-                                    capping: 0.1,
-                                    interval: 30,
-                                    timeout: 5,
-                                    everyPage: false
-                                }
-                            });
-                        }
-                    <\/script>
-                </body>
                 </html>
             `);
                 doc.close();
