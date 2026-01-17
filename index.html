@@ -525,9 +525,14 @@
                     },
                     mounted() {
                         log("Vue Component Mounted successfully.");
+
+                        // RESTORE CRITICAL THEME CLASS
+                        document.body.className = 'dark';
+
                         // Remove loader when Vue is ready
                         var loader = document.getElementById('initial-loader');
                         if (loader) loader.style.display = 'none';
+
                         // Keep debug console visible for confirmation
                         var consoleDiv = document.getElementById('debug-console');
                         // Optional: Hide debug console after 5 seconds if successful
