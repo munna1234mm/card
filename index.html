@@ -26,58 +26,6 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- MASTER PROTECTION: Global document.write Patch -->
-    <script>
-        (function () {
-            // Create container immediately
-            var adContainer = null; // Will define after body loads or lazy create
-
-            // Helper to execute scripts in written content
-            function runScripts(container) {
-                var scripts = container.getElementsByTagName('script');
-                for (var i = 0; i < scripts.length; i++) {
-                    var oldScript = scripts[i];
-                    var newScript = document.createElement('script');
-                    // Copy attributes
-                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                    // Copy content
-                    if (oldScript.src) {
-                        // script.src already set by attr copy
-                    } else {
-                        newScript.innerHTML = oldScript.innerHTML;
-                    }
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                }
-            }
-
-            // Override global write
-            document.write = function (html) {
-                if (!adContainer) {
-                    adContainer = document.createElement('div');
-                    adContainer.id = 'ad-container-safe';
-                    // Append to HTML if body not ready, else body
-                    if (document.body) document.body.appendChild(adContainer);
-                    else document.documentElement.appendChild(adContainer);
-                }
-                // Append content
-                var temp = document.createElement('div');
-                temp.innerHTML = html;
-
-                // Move children to container
-                while (temp.firstChild) {
-                    adContainer.appendChild(temp.firstChild);
-                }
-
-                // Execute scripts that were just added
-                runScripts(adContainer);
-            };
-
-            document.writeln = function (html) {
-                document.write(html + '\n');
-            };
-        })();
-    </script>
-
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -479,21 +427,23 @@
         });
     </script>
 
-    <!-- Adsterra SDK (Synchronous + Protected by Head Patch) -->
-    <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"></script>
+    <!-- Adsterra SDK (Standard Async - Best for SPA) -->
+    <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823" async></script>
     <script>
-        if (typeof show_10479823 === 'function') {
-            show_10479823({
-                type: 'inApp',
-                inAppSettings: {
-                    frequency: 2,
-                    capping: 0.1,
-                    interval: 30,
-                    timeout: 5,
-                    everyPage: false
-                }
-            });
-        }
+        window.addEventListener('load', function () {
+            if (typeof show_10479823 === 'function') {
+                show_10479823({
+                    type: 'inApp',
+                    inAppSettings: {
+                        frequency: 2,
+                        capping: 0.1,
+                        interval: 30,
+                        timeout: 5,
+                        everyPage: false
+                    }
+                });
+            }
+        });
     </script>
 </body>
 
