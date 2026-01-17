@@ -23,65 +23,94 @@
         };
     </script>
 
-    <!-- Adsterra "SafeFrame" Integration (Dynamic Iframe) -->
+    <!-- Adsterra Protection Suite (Block Page Wipe) -->
+    <div id="debug-console"
+        style="position: fixed; bottom: 0; left: 0; width: 100%; height: 100px; background: rgba(0,0,0,0.8); color: lime; font-family: monospace; font-size: 10px; overflow-y: scroll; z-index: 9999999; pointer-events: none; display: none;">
+    </div>
     <script>
-        window.addEventListener('load', function () {
-            // Wait for main app to be visible
-            setTimeout(function () {
-                console.log("Initializing Adsterra SafeFrame...");
+        (function () {
+            // Debug Logger
+            var debugLog = document.getElementById('debug-console');
+            function log(msg) {
+                console.log("[SafeAd] " + msg);
+                debugLog.innerHTML += "<div>> " + msg + "</div>";
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
 
-                // 1. Create Iframe safely in JS
-                var iframe = document.createElement('iframe');
-                iframe.style.position = 'fixed';
-                iframe.style.top = '0';
-                iframe.style.left = '0';
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.zIndex = '2147483647'; // Max Z-Index
-                iframe.style.border = 'none';
-                iframe.style.background = 'transparent';
-                iframe.style.pointerEvents = 'none'; // Allow clicks to pass through initially
+            log("Initializing Protection...");
 
-                // Append to body
-                document.body.appendChild(iframe);
+            // 1. BLOCK document.open (The Page Killer)
+            document.open = function () {
+                log("BLOCKED attempt to call document.open() - Page wipe prevented.");
+                return document;
+            };
 
-                // 2. Write Ad Code into Iframe
-                var doc = iframe.contentWindow.document;
-                doc.open();
-                doc.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
-                        /* Content inside iframe (the ad) should catch clicks */
-                        body * { pointer-events: auto; }
-                    </style>
-                </head>
-                <body>
-                    <!-- Explicit HTTPS to avoid protocol-relative issues in about:blank -->
-                    <script src="https://libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"><\/script>
-                    <script>
-                        if (typeof show_10479823 === 'function') {
-                            show_10479823({
-                                type: 'inApp',
-                                inAppSettings: {
-                                    frequency: 2,
-                                    capping: 0.1,
-                                    interval: 30,
-                                    timeout: 5,
-                                    everyPage: false
-                                }
-                            });
+            // 2. Safe Container
+            var adContainer = document.createElement('div');
+            adContainer.id = 'adsterra-safe-wrapper';
+            document.body.appendChild(adContainer);
+
+            // 3. Intercept document.write
+            document.write = function (html) {
+                log("Intercepted document.write (" + html.length + " chars)");
+
+                // Create a temp container to parse HTML
+                var temp = document.createElement('div');
+                temp.innerHTML = html;
+
+                // Move elements to safe container and EXECUTE SCRIPTS
+                while (temp.firstChild) {
+                    var node = temp.firstChild;
+                    if (node.tagName === 'SCRIPT') {
+                        var newScript = document.createElement('script');
+                        if (node.src) {
+                            newScript.src = node.src;
+                            log("Re-injecting script src: " + node.src);
+                        } else {
+                            newScript.textContent = node.textContent;
+                            log("Re-injecting inline script");
                         }
-                    <\/script>
-                </body>
-                </html>
-            `);
-                doc.close();
-                console.log("Adsterra SafeFrame Loaded.");
-            }, 1500);
-        });
+                        adContainer.appendChild(newScript);
+                    } else {
+                        adContainer.appendChild(node);
+                    }
+                    // Handle the remove from temp implicitly by appendChild
+                }
+            };
+
+            document.writeln = function (html) {
+                document.write(html + '\n');
+            };
+
+            // 4. Load the Adsterra Script Safely
+            setTimeout(function () {
+                log("Loading Adsterra SDK...");
+                var s = document.createElement('script');
+                s.src = "https://libtl.com/sdk.js?v=" + Date.now(); // Cache bust
+                s.setAttribute('data-zone', '10479823');
+                s.setAttribute('data-sdk', 'show_10479823');
+                s.onload = function () {
+                    log("SDK Script Loaded. Initializing...");
+                    if (typeof show_10479823 === 'function') {
+                        show_10479823({
+                            type: 'inApp',
+                            inAppSettings: {
+                                frequency: 2,
+                                capping: 0.1,
+                                interval: 30,
+                                timeout: 5,
+                                everyPage: false
+                            }
+                        });
+                        log("show_10479823 executed.");
+                    } else {
+                        log("Error: show_10479823 is missing.");
+                    }
+                };
+                document.body.appendChild(s);
+            }, 2000);
+
+        })();
     </script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
