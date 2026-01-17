@@ -26,6 +26,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- PostScribe (Safe Ad Loader) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/postscribe/2.0.8/postscribe.min.js"></script>
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -427,51 +430,18 @@
         });
     </script>
 
-    <!-- Adsterra Safe Loading System (Permanent Fix v2) -->
+    <!-- Adsterra Integration (PostScribe - The Industry Standard Fix) -->
+    <div id="adsterra-container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/postscribe/2.0.8/postscribe.min.js"></script>
     <script>
-        (function () {
-            // 1. Create a safe container - VISIBLE now
-            var adContainer = document.createElement('div');
-            adContainer.id = 'adsterra-safe-container';
-            // adContainer.style.display = 'none'; // Removed hiding to allow ads to show
-            document.body.appendChild(adContainer);
-
-            // Helper: Execute scripts found in content
-            function runScripts(content) {
-                var temp = document.createElement('div');
-                temp.innerHTML = content;
-                var scripts = temp.getElementsByTagName('script');
-                for (var i = 0; i < scripts.length; i++) {
-                    var script = document.createElement('script');
-                    if (scripts[i].src) {
-                        script.src = scripts[i].src;
-                    } else {
-                        script.innerHTML = scripts[i].innerHTML;
-                    }
-                    document.body.appendChild(script);
-                }
-            }
-
-            // 2. Intercept document.write 
-            document.write = function (content) {
-                console.log("SafeWrite Intercepted:", content);
-                adContainer.insertAdjacentHTML('beforeend', content);
-                runScripts(content); // EXECUTE the trapped scripts
-            };
-            document.writeln = function (content) {
-                adContainer.insertAdjacentHTML('beforeend', content + '\n');
-                runScripts(content); // EXECUTE the trapped scripts
-            };
-
-            // 3. Load Adsterra SDK with a safety delay
+        // Wait for everything to be stable
+        window.addEventListener('load', function () {
             setTimeout(function () {
-                var script = document.createElement('script');
-                script.src = '//libtl.com/sdk.js';
-                script.setAttribute('data-zone', '10479823');
-                script.setAttribute('data-sdk', 'show_10479823');
+                console.log("Starting safe ad injection via PostScribe...");
 
-                script.onload = function () {
-                    console.log("Adsterra SDK Loaded.");
+                postscribe('#adsterra-container', `
+                <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"><\/script>
+                <script>
                     if (typeof show_10479823 === 'function') {
                         show_10479823({
                             type: 'inApp',
@@ -484,10 +454,18 @@
                             }
                         });
                     }
-                };
-                document.head.appendChild(script);
-            }, 3000); // 3 Seconds Delay
-        })();
+                <\/script>
+            `, {
+                    done: function () {
+                        console.log('Adsterra ads loaded safely.');
+                    },
+                    error: function (err) {
+                        console.error('Adsterra injection failed:', err);
+                    }
+                });
+
+            }, 2000); // 2 Second safety delay
+        });
     </script>
 </body>
 
