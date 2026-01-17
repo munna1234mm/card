@@ -427,22 +427,58 @@
         });
     </script>
 
-    <!-- Adsterra Telegram Bot SDK: Sync Placement (Prevents Doc Write Wipe) -->
-    <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"></script>
-
+    <!-- Adsterra Safe Loading System -->
     <script>
-        if (typeof show_10479823 === 'function') {
-            show_10479823({
-                type: 'inApp',
-                inAppSettings: {
-                    frequency: 2,
-                    capping: 0.1,
-                    interval: 30,
-                    timeout: 5,
-                    everyPage: false
-                }
-            });
-        }
+        // MASTER FIX: Prevent Adsterra from wiping the page with document.write
+        (function () {
+            var originalWrite = document.write;
+            var originalWriteln = document.writeln;
+
+            // Create a container for ad content
+            var adContainer = document.createElement('div');
+            adContainer.id = 'adsterra-safe-container';
+            adContainer.style.display = 'none'; // Keep hidden or style as needed
+            document.body.appendChild(adContainer);
+
+            // Override document.write to append to our container instead of wiping document
+            document.write = function (content) {
+                console.log(" intercepted document.write:", content);
+                adContainer.insertAdjacentHTML('beforeend', content);
+            };
+            document.writeln = function (content) {
+                console.log(" intercepted document.writeln:", content);
+                adContainer.insertAdjacentHTML('beforeend', content + '\n');
+            };
+
+            // Load the Adsterra SDK safely
+            setTimeout(function () {
+                var script = document.createElement('script');
+                script.src = '//libtl.com/sdk.js';
+                script.setAttribute('data-zone', '10479823');
+                script.setAttribute('data-sdk', 'show_10479823');
+
+                script.onload = function () {
+                    console.log("Adsterra SDK Loaded Safely");
+                    if (typeof show_10479823 === 'function') {
+                        show_10479823({
+                            type: 'inApp',
+                            inAppSettings: {
+                                frequency: 2,
+                                capping: 0.1,
+                                interval: 30,
+                                timeout: 5,
+                                everyPage: false
+                            }
+                        });
+                    }
+
+                    // Optional: Restore original document.write (risky if ad keeps writing)
+                    // document.write = originalWrite; 
+                };
+
+                document.head.appendChild(script);
+            }, 2000); // 2 second delay to ensure Vue is stable
+        })();
     </script>
 </body>
 
