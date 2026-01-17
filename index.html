@@ -430,11 +430,47 @@
         });
     </script>
 
-    <!-- Adsterra Sandbox Integration (Iframe Overlay) -->
-    <iframe src="ad-frame.html"
-        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; border: none; z-index: 9999; pointer-events: none; background: transparent;"
-        allowtransparency="true">
-    </iframe>
+    <!-- Adsterra Integration (PostScribe - Verified Fix) -->
+    <div id="adsterra-container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/postscribe/2.0.8/postscribe.min.js"></script>
+    <script>
+        window.addEventListener('load', function () {
+            // Wait 3 seconds to ensure app is fully interactive
+            setTimeout(function () {
+                if (typeof postscribe === 'function') {
+                    console.log("PostScribe: Injecting Adsterra SDK...");
+                    postscribe('#adsterra-container', '<script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"><\/script>');
+
+                    // Configure ad *after* SDK injection request
+                    // Note: The SDK itself likely runs automatically or exposes the global function.
+                    // We add a poller to initialize it once loaded by PostScribe.
+                    var checks = 0;
+                    var initInt = setInterval(function () {
+                        checks++;
+                        if (typeof show_10479823 === 'function') {
+                            clearInterval(initInt);
+                            console.log("Adsterra SDK detected. Initializing...");
+                            show_10479823({
+                                type: 'inApp',
+                                inAppSettings: {
+                                    frequency: 2,
+                                    capping: 0.1,
+                                    interval: 30,
+                                    timeout: 5,
+                                    everyPage: false
+                                }
+                            });
+                        } else if (checks > 20) { // 10 seconds timeout
+                            clearInterval(initInt);
+                            console.warn("Adsterra SDK load timeout via PostScribe.");
+                        }
+                    }, 500);
+                } else {
+                    console.error("PostScribe library failed to load.");
+                }
+            }, 3000);
+        });
+    </script>
 </body>
 
 </html>
