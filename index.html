@@ -43,24 +43,7 @@
             z-index: 50;
         }
 
-        /* Promo Area (Safe Name for Ad Places) - Renaming ad-slot to avoid blockers */
-        .promo-area {
-            background: rgba(0, 0, 0, 0.05);
-            border: 2px dashed #475569;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            font-weight: 600;
-            margin: 10px 0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
 
-        .dark .promo-area {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: #334155;
-        }
 
         .card-preview {
             background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
@@ -170,12 +153,7 @@
                         </div>
                     </div>
 
-                    <!-- SIDEBAR AD PLACEHOLDER -->
-                    <div class="promo-area h-60 w-full text-[10px] mt-4 relative">
-                        <span class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-50">
-                            [SIDEBAR AD SPACE]
-                        </span>
-                    </div>
+
                 </nav>
             </div>
         </aside>
@@ -183,14 +161,7 @@
         <!-- Main Content Area -->
         <main class="lg:ml-72 pt-20 transition-all">
 
-            <!-- TOP BANNER AD PLACEHOLDER -->
-            <div class="container mx-auto px-4">
-                <div class="promo-area h-24 w-full text-xs relative">
-                    <span class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-50">
-                        [TOP BANNER AD SPACE]
-                    </span>
-                </div>
-            </div>
+
 
             <div class="container mx-auto px-4 py-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -379,37 +350,17 @@
                             </div>
                         </section>
 
-                        <!-- CONTENT AD PLACEHOLDER -->
-                        <div class="promo-area h-32 w-full text-xs mt-8 relative">
-                            <span
-                                class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-50">
-                                [IN-CONTENT AD SPACE]
-                            </span>
-                        </div>
+
                     </div>
 
-                    <!-- Right Ad Column -->
-                    <div class="hidden lg:block lg:col-span-3 space-y-6">
-                        <div class="sticky top-24">
-                            <div class="promo-area h-[600px] w-full text-xs relative">
-                                <span
-                                    class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-50">
-                                    [STICKY SIDEBAR AD SPACE]
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+
 
                 </div>
             </div>
 
             <!-- Footer -->
             <footer class="mt-12 border-t py-8 text-center" :class="isDark ? 'border-slate-800' : 'border-slate-200'">
-                <div class="promo-area h-24 max-w-2xl mx-auto text-xs mb-6 relative">
-                    <span class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-50">
-                        [FOOTER AD SPACE]
-                    </span>
-                </div>
+
                 <p class="text-xs opacity-50">&copy; 2024 Tools Suite. All rights reserved.</p>
             </footer>
         </main>
