@@ -427,8 +427,27 @@
             }
         });
     </script>
-    <!-- Adsterra Multitag (Moved to bottom) -->
-    <script src="https://quge5.com/88/tag.min.js" data-zone="203077" async data-cfasync="false"></script>
+    <!-- Adsterra Multitag (Safe Delayed Loader) -->
+    <script>
+        window.addEventListener('load', function () {
+            console.log("Page loaded. Scheduling ad injection in 3 seconds...");
+            setTimeout(function () {
+                var script = document.createElement('script');
+                script.src = "https://quge5.com/88/tag.min.js";
+                script.setAttribute('data-zone', '203077');
+                script.async = true;
+                script.setAttribute('data-cfasync', 'false');
+
+                // Error handling for the script itself
+                script.onerror = function () {
+                    console.error("Adsterra script failed to load.");
+                };
+
+                document.body.appendChild(script);
+                console.log("Adsterra script injected safely.");
+            }, 3000); // 3 second delay to ensure site UI is ready
+        });
+    </script>
 </body>
 
 </html>
