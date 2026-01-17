@@ -90,7 +90,8 @@
             }
         }
     </style>
-
+    <!-- Adsterra Telegram Bot SDK (Deferred for performance) -->
+    <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823" defer></script>
 </head>
 
 <body class="dark overflow-x-hidden">
@@ -424,37 +425,43 @@
             },
             mounted() {
                 document.body.className = 'dark';
-
-                // SAFE AD INJECTION: Wait 3 seconds for app to be ready
-                setTimeout(() => {
-                    console.log("Injecting Adsterra SDK...");
-                    const script = document.createElement('script');
-                    script.src = '//libtl.com/sdk.js';
-                    script.setAttribute('data-zone', '10479823');
-                    script.setAttribute('data-sdk', 'show_10479823');
-
-                    script.onload = () => {
-                        console.log("Adsterra SDK loaded. Initializing...");
-                        if (typeof show_10479823 === 'function') {
-                            show_10479823({
-                                type: 'inApp',
-                                inAppSettings: {
-                                    frequency: 2,
-                                    capping: 0.1,
-                                    interval: 30,
-                                    timeout: 5,
-                                    everyPage: false
-                                }
-                            });
-                        }
-                    };
-
-                    document.head.appendChild(script);
-                }, 3000);
             }
         });
     </script>
 
+    <!-- Adsterra Config: Robust Polling Mechanism -->
+    <script>
+        (function () {
+            var checks = 0;
+            var maxChecks = 20; // Try for 10 seconds
+
+            function initAd() {
+                if (typeof show_10479823 === 'function') {
+                    console.log("Adsterra SDK ready. Initializing...");
+                    show_10479823({
+                        type: 'inApp',
+                        inAppSettings: {
+                            frequency: 2,
+                            capping: 0.1,
+                            interval: 30,
+                            timeout: 5,
+                            everyPage: false
+                        }
+                    });
+                } else {
+                    checks++;
+                    if (checks < maxChecks) {
+                        setTimeout(initAd, 500); // Check every 500ms
+                    } else {
+                        console.warn("Adsterra SDK failed to load in time.");
+                    }
+                }
+            }
+
+            // Start checking when page loads
+            window.addEventListener('load', initAd);
+        })();
+    </script>
 </body>
 
 </html>
