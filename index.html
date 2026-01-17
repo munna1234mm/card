@@ -90,8 +90,7 @@
             }
         }
     </style>
-    <!-- Adsterra Telegram Bot SDK -->
-    <script src='//libtl.com/sdk.js' data-zone='10479823' data-sdk='show_10479823'></script>
+
 </head>
 
 <body class="dark overflow-x-hidden">
@@ -254,7 +253,8 @@
                             <section class="text-center lg:text-left">
                                 <h1
                                     class="text-2xl md:text-3xl font-bold mb-2 flex items-center justify-center lg:justify-start gap-3">
-                                    <i class="fas fa-check-double text-cyan-500"></i> Card Validator</h1>
+                                    <i class="fas fa-check-double text-cyan-500"></i> Card Validator
+                                </h1>
                                 <p class="text-slate-500 dark:text-slate-400 text-sm">Check your list using the Luhn
                                     Algorithm.</p>
                             </section>
@@ -424,27 +424,37 @@
             },
             mounted() {
                 document.body.className = 'dark';
+
+                // SAFE AD INJECTION: Wait 3 seconds for app to be ready
+                setTimeout(() => {
+                    console.log("Injecting Adsterra SDK...");
+                    const script = document.createElement('script');
+                    script.src = '//libtl.com/sdk.js';
+                    script.setAttribute('data-zone', '10479823');
+                    script.setAttribute('data-sdk', 'show_10479823');
+
+                    script.onload = () => {
+                        console.log("Adsterra SDK loaded. Initializing...");
+                        if (typeof show_10479823 === 'function') {
+                            show_10479823({
+                                type: 'inApp',
+                                inAppSettings: {
+                                    frequency: 2,
+                                    capping: 0.1,
+                                    interval: 30,
+                                    timeout: 5,
+                                    everyPage: false
+                                }
+                            });
+                        }
+                    };
+
+                    document.head.appendChild(script);
+                }, 3000);
             }
         });
     </script>
 
-    <!-- Adsterra Telegram Bot Interstitial Config -->
-    <script>
-        if (typeof show_10479823 === 'function') {
-            show_10479823({
-                type: 'inApp',
-                inAppSettings: {
-                    frequency: 2,
-                    capping: 0.1,
-                    interval: 30,
-                    timeout: 5,
-                    everyPage: false
-                }
-            });
-        } else {
-            console.warn("Adsterra SDK not loaded yet.");
-        }
-    </script>
 </body>
 
 </html>
