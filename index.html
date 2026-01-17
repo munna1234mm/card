@@ -23,6 +23,44 @@
         };
     </script>
 
+    <!-- Adsterra Inline Sandbox (Prevents SPA Recursion Crash) -->
+    <iframe id="ad-frame"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; border: none; z-index: 9999; background: transparent; pointer-events: none;"
+        allowtransparency="true" srcdoc='
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+            /* Make sure clicks pass through where there is no ad, but ad is clickable */
+            html, body { width: 100%; height: 100%; pointer-events: none; }
+            /* This assumes the ad creates elements that need interaction */
+            body > * { pointer-events: auto !important; }
+        </style>
+    </head>
+    <body>
+        <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"></script>
+        <script>
+            // Slight delay to ensure frame is ready
+            setTimeout(() => {
+                if (typeof show_10479823 === "function") {
+                    show_10479823({
+                        type: "inApp",
+                        inAppSettings: {
+                            frequency: 2,
+                            capping: 0.1,
+                            interval: 30,
+                            timeout: 5,
+                            everyPage: false
+                        }
+                    });
+                }
+            }, 100);
+        </script>
+    </body>
+    </html>
+'>
+    </iframe>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
