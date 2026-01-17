@@ -427,74 +427,22 @@
         });
     </script>
 
-    <!-- Adsterra Service Worker Registration -->
+    <!-- Adsterra PHP Isolation (Server-Side Mode) -->
+    <!-- SAFETY: Unregister SW to clear cache -->
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(function (registration) {
-                console.log('Adsterra Worker Registered:', registration.scope);
-            }).catch(function (error) {
-                console.log('Adsterra Worker Failed:', error);
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
             });
         }
     </script>
 
-    <!-- Adsterra Blob Isolation (Safe Virtual Mode) -->
-    <script>
-        window.addEventListener('load', function () {
-            setTimeout(function () {
-                console.log("Creating Virtual Ad Blob...");
-
-                var adHtml = `
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>
-                            body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
-                            body * { pointer-events: auto !important; }
-                        </style>
-                    </head>
-                    <body>
-                        <script src="https://libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"><\/script>
-                        <script>
-                            if (typeof show_10479823 === 'function') {
-                                show_10479823({
-                                    type: 'inApp',
-                                    inAppSettings: {
-                                        frequency: 2,
-                                        capping: 0.1,
-                                        interval: 30,
-                                        timeout: 5,
-                                        everyPage: false
-                                    }
-                                });
-                            }
-                        <\/script>
-                    </body>
-                    </html>
-                `;
-
-                var blob = new Blob([adHtml], { type: 'text/html' });
-                var blobUrl = URL.createObjectURL(blob);
-
-                var iframe = document.createElement('iframe');
-                iframe.style.position = 'fixed';
-                iframe.style.top = '0';
-                iframe.style.left = '0';
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.zIndex = '2147483647';
-                iframe.style.border = 'none';
-                iframe.style.background = 'transparent';
-                iframe.style.pointerEvents = 'none'; // Pass clicks through empty areas
-
-                iframe.src = blobUrl;
-                document.body.appendChild(iframe);
-                console.log("Virtual Ad Blob Loaded.");
-            }, 3000);
-        });
-    </script>
+    <iframe src="ad.php"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2147483647; border: none; background: transparent; pointer-events: none;"
+        sandbox="allow-scripts allow-popups allow-forms allow-same-origin">
+    </iframe>
 </body>
 
 </html>
