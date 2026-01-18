@@ -4,24 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ad Container</title>
+    <title>Ad Frame</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             background: transparent;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
         }
     </style>
 </head>
 
 <body>
-    <!-- Adsterra SDK Code -->
-    <script src="//libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"></script>
+    <!-- Adsterra SDK -->
+    <script src="https://libtl.com/sdk.js" data-zone="10479823" data-sdk="show_10479823"></script>
+
+    <!-- Execution -->
     <script>
         if (typeof show_10479823 === 'function') {
             show_10479823({
